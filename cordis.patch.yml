@@ -1,0 +1,6 @@
+# dsh-archived-sessions bundle patch: mount the host plugin under its package
+# name, resolved through the profile's node_modules. The client half is picked
+# up automatically by the harness client-modules scan (dsh.client.platform: web).
+- insert:
+    - id: dsh-archived-sessions
+      name: dsh-archived-sessions
