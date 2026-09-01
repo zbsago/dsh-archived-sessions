@@ -139,7 +139,7 @@ function BlockView({ block, t }) {
           style={{
             opacity: 0.78,
             fontSize: 12,
-            fontFamily: "var(--dsh-mono, monospace)",
+            fontFamily: "var(--dsw-font-markdown-code, monospace)",
             whiteSpace: "pre-wrap",
             wordBreak: "break-word",
             marginTop: 4,
@@ -154,10 +154,10 @@ function BlockView({ block, t }) {
           style={{
             opacity: 0.7,
             fontSize: 12,
-            fontFamily: "var(--dsh-mono, monospace)",
+            fontFamily: "var(--dsw-font-markdown-code, monospace)",
             whiteSpace: "pre-wrap",
             wordBreak: "break-word",
-            background: "color-mix(in srgb, var(--dsh-text, #e6e6e6) 6%, transparent)",
+            background: "color-mix(in srgb, var(--dsw-alias-label-primary) 6%, transparent)",
             borderRadius: 6,
             padding: "4px 8px",
             marginTop: 4,
@@ -177,11 +177,7 @@ function MessageRow({ message, t }) {
   const isAssistant = message.role === "assistant";
   const isTool = message.kind === "tool";
   const align = isAssistant ? "flex-start" : "flex-end";
-  const bg = isAssistant
-    ? "color-mix(in srgb, #4a76d8 18%, transparent)"
-    : isTool
-      ? "transparent"
-      : "color-mix(in srgb, #3fa06a 16%, transparent)";
+  const bg = isTool ? "transparent" : "var(--dsw-specific-bubble)";
   const label = isAssistant ? t.assistant : isTool ? t.tool : t.user;
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: align, margin: "10px 0" }}>
@@ -240,6 +236,7 @@ function ArchivedPanel(props) {
   const [query, setQuery] = React.useState("");
   const [contentHits, setContentHits] = React.useState([]);
   const [contentSearching, setContentSearching] = React.useState(false);
+  const [hoverId, setHoverId] = React.useState(null);
 
   // Reset to the list every time the panel opens.
   React.useEffect(() => {
@@ -420,12 +417,12 @@ function ArchivedPanel(props) {
     overflow: "hidden",
     display: "flex",
     flexDirection: "column",
-    background: "var(--dsh-panel-bg, #1f1f23)",
-    color: "var(--dsh-text, #e6e6e6)",
-    border: "1px solid var(--dsh-border, #3a3a40)",
+    background: "var(--dsw-alias-bg-overlay)",
+    color: "var(--dsw-alias-label-primary)",
+    border: "1px solid var(--dsw-alias-border-l2)",
     borderRadius: "10px",
-    boxShadow: "0 12px 40px rgba(0,0,0,0.45)",
-    fontFamily: "var(--dsh-font, inherit)",
+    boxShadow: "var(--dsw-shadow-lv3, 0 12px 40px rgba(0,0,0,0.45))",
+    fontFamily: "var(--dsw-font-family, inherit)",
     fontSize: "13px",
     lineHeight: 1.5,
   };
@@ -434,7 +431,7 @@ function ArchivedPanel(props) {
     alignItems: "center",
     gap: "8px",
     padding: "10px 12px",
-    borderBottom: "1px solid var(--dsh-border, #3a3a40)",
+    borderBottom: "1px solid var(--dsw-alias-border-l1)",
     fontWeight: 600,
     flexShrink: 0,
   };
@@ -444,10 +441,10 @@ function ArchivedPanel(props) {
     gap: "8px",
     padding: "10px 12px",
     cursor: "pointer",
-    borderBottom: "1px solid color-mix(in srgb, var(--dsh-border, #3a3a40) 50%, transparent)",
+    borderBottom: "1px solid var(--dsw-alias-border-l1)",
   };
   const btnBase = {
-    border: "1px solid var(--dsh-border, #4a4a52)",
+    border: "1px solid var(--dsw-alias-border-l2)",
     background: "transparent",
     color: "inherit",
     borderRadius: "6px",
@@ -495,8 +492,8 @@ function ArchivedPanel(props) {
                 margin: "8px 12px",
                 padding: "6px 8px",
                 borderRadius: "6px",
-                border: "1px solid var(--dsh-border, #4a4a52)",
-                background: "color-mix(in srgb, var(--dsh-panel-bg, #1f1f23) 70%, transparent)",
+                border: "1px solid var(--dsw-alias-border-l2)",
+                background: "var(--dsw-alias-bg-layer-2)",
                 color: "inherit",
                 fontSize: "13px",
                 outline: "none",
@@ -512,7 +509,13 @@ function ArchivedPanel(props) {
                 visibleRows.map((row) => {
                   const { session, workspace } = row;
                   return (
-                    <div key={session.id} style={rowStyle} onClick={() => handlePreview(session.id)}>
+                    <div
+                      key={session.id}
+                      style={{ ...rowStyle, background: hoverId === session.id ? "var(--dsw-alias-interactive-bg-hover)" : undefined }}
+                      onMouseEnter={() => setHoverId(session.id)}
+                      onMouseLeave={() => setHoverId(null)}
+                      onClick={() => handlePreview(session.id)}
+                    >
                       <div style={{ flex: "1 1 auto", minWidth: 0 }}>
                         <div
                           style={{
@@ -606,7 +609,7 @@ function ArchivedPanel(props) {
                 padding: "6px 12px",
                 opacity: 0.65,
                 fontSize: 12,
-                borderBottom: "1px solid color-mix(in srgb, var(--dsh-border, #3a3a40) 50%, transparent)",
+                borderBottom: "1px solid var(--dsw-alias-border-l1)",
                 flexShrink: 0,
               }}
             >
@@ -620,7 +623,7 @@ function ArchivedPanel(props) {
               {loading ? (
                 <div style={{ padding: "24px 12px", textAlign: "center", opacity: 0.6 }}>{tText.loading}</div>
               ) : error ? (
-                <div style={{ padding: "24px 12px", textAlign: "center", opacity: 0.7, color: "#e06666" }}>
+                <div style={{ padding: "24px 12px", textAlign: "center", opacity: 0.7, color: "var(--dsw-alias-state-error-primary)" }}>
                   {tText.loadError}: {error}
                 </div>
               ) : transcript == null ? (
@@ -640,7 +643,7 @@ function ArchivedPanel(props) {
                 </React.Fragment>
               )}
             </div>
-            <div style={{ padding: "10px 12px", borderTop: "1px solid var(--dsh-border, #3a3a40)", flexShrink: 0, display: "flex", justifyContent: "flex-end" }}>
+            <div style={{ padding: "10px 12px", borderTop: "1px solid var(--dsw-alias-border-l1)", flexShrink: 0, display: "flex", justifyContent: "flex-end" }}>
               <button
                 type="button"
                 disabled={busy !== null}
