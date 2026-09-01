@@ -18,19 +18,46 @@ DeepSeek Harness 插件：查看并恢复归档会话（archived sessions）。
 - 数据即开即用：`session.list` 本就包含归档会话，归档集合 `archivedSessionIds`
   也已推送到浏览器；恢复后 host 通过 `domain/changed` 自动广播
   `host/archived-sessions-changed`，浏览器侧栏即时刷新。
-- 数据即开即用：`session.list` 本就包含归档会话，归档集合 `archivedSessionIds`
-  也已推送到浏览器；恢复后 host 通过 `domain/changed` 自动广播
-  `host/archived-sessions-changed`，浏览器侧栏即时刷新。
 
 ## 安装
+
+### 普通用户（从 GitHub 安装）
+
+```bash
+dsh plugin --profile web add github:zbsago/dsh-archived-sessions
+sudo systemctl restart dsh-web
+```
+
+- 上面命令安装仓库 `main` 分支最新版。想固定到发布版本，加 tag 后缀：
+
+  ```bash
+  dsh plugin --profile web add github:zbsago/dsh-archived-sessions#semver:v0.1.0
+  sudo systemctl restart dsh-web
+  ```
+
+- 从 GitHub 升级到最新版：
+
+  ```bash
+  dsh plugin --profile web update dsh-archived-sessions
+  sudo systemctl restart dsh-web
+  ```
+
+> **注**：git 来源的包默认不运行构建脚本。若 pnpm 安装时报
+> `Ignored build scripts` / 提示需要 `allowBuilds`，把报错里打印的确切 key 填进
+> `~/.dsh/profiles/web/pnpm-workspace.yaml` 的 `allowBuilds`（如
+> `dsh-archived-sessions: true`），再重跑安装命令。本包已提交构建产物
+> （`lib/client.js`），正常情况无需这一步。
+
+### 本地开发（改代码调试用）
 
 ```bash
 dsh plugin --profile web add /home/xxk/ov-dsh-plugin/dsh-archived-sessions
 sudo systemctl restart dsh-web
 ```
 
-该命令把本地目录链接进 web profile 的 `node_modules`，追加到
+该命令把本地目录以 link 方式链接进 web profile 的 `node_modules`，追加到
 `dsh.profile.bundles`，并在启动时合并本包的 `cordis.patch.yml`。
+仅本机路径有效，不能给其他用户安装使用。
 
 ## 结构
 
